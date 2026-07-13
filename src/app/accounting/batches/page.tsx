@@ -2,6 +2,10 @@
 
 import { useMemo, useState } from "react";
 import EnterpriseTable, { type Column } from "../../../components/EnterpriseTable";
+import Workspace from "../../../components/workspace/Workspace";
+import WorkspaceDetailsPanel from "../../../components/workspace/WorkspaceDetailsPanel";
+import WorkspaceHeader from "../../../components/workspace/WorkspaceHeader";
+import WorkspaceToolbar from "../../../components/workspace/WorkspaceToolbar";
 import type { Batch, BatchSource, BatchStatus } from "../../../types/accounting";
 
 type BatchRow = Batch & {
@@ -323,95 +327,126 @@ export default function BatchesPage() {
   ];
 
   return (
-    <div className="max-w-7xl">
-      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-200 pb-4">
-        <div>
-          <h1 className="text-xl font-semibold text-gray-900">Batch Queue</h1>
-          <p className="mt-1 text-sm text-gray-600">Review, approve, and post accounting batches.</p>
-        </div>
-
-        <button className="inline-flex items-center rounded-md bg-indigo-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700">
-          Create Batch
-        </button>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs text-gray-600">
-        <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-700">{readyCount} ready</span>
-        <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">{postedCount} posted</span>
-        <span className="rounded-full bg-rose-50 px-2.5 py-1 text-rose-700">{unbalancedCount} needs review</span>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center gap-3 rounded-md border border-gray-200 bg-gray-50 px-3 py-3">
-        <label className="flex items-center gap-2 text-sm text-gray-700">
-          <span className="text-gray-500">Status</span>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as "ALL" | BatchStatus)}
-            className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm"
-          >
-            <option value="ALL">All</option>
-            <option value="DRAFT">Draft</option>
-            <option value="READY">Ready</option>
-            <option value="POSTED">Posted</option>
-            <option value="VOID">Void</option>
-          </select>
-        </label>
-
-        <label className="flex items-center gap-2 text-sm text-gray-700">
-          <span className="text-gray-500">Source</span>
-          <select
-            value={sourceFilter}
-            onChange={(e) => setSourceFilter(e.target.value as "ALL" | BatchSource)}
-            className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm"
-          >
-            <option value="ALL">All</option>
-            <option value="REVENUE">Revenue</option>
-            <option value="AP">AP</option>
-            <option value="AR">AR</option>
-            <option value="PRODUCTION">Production</option>
-            <option value="ACCRUAL">Accrual</option>
-            <option value="HEDGE">Hedge</option>
-            <option value="MANUAL">Manual</option>
-            <option value="JIB">JIB</option>
-          </select>
-        </label>
-
-        <label className="flex items-center gap-2 text-sm text-gray-700">
-          <span className="text-gray-500">Period</span>
-          <select
-            value={periodFilter}
-            onChange={(e) => setPeriodFilter(e.target.value)}
-            className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm"
-          >
-            <option value="ALL">All</option>
-            <option value="2026-07">2026-07</option>
-            <option value="2026-06">2026-06</option>
-            <option value="2026-05">2026-05</option>
-          </select>
-        </label>
-
-        <button
-          type="button"
-          onClick={() => {
-            setStatusFilter("ALL");
-            setSourceFilter("ALL");
-            setPeriodFilter("ALL");
-          }}
-          className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm text-gray-600 transition hover:bg-gray-50"
-        >
-          Reset Filters
-        </button>
-      </div>
-
-      <div className="mt-4">
-        <EnterpriseTable<BatchRow>
-          columns={columns}
-          data={filteredRows}
-          rowKey="id"
-          initialPageSize={10}
-          pageSizeOptions={[10, 25]}
+    <Workspace
+      header={
+        <WorkspaceHeader
+          title="Batch Queue"
+          subtitle="Review, approve, and post accounting batches."
+          primaryAction={
+            <button className="inline-flex items-center rounded-md bg-indigo-600 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700">
+              Create Batch
+            </button>
+          }
+          secondaryActions={
+            <div className="flex flex-wrap items-center gap-2 text-xs text-gray-600">
+              <span className="rounded-full bg-amber-50 px-2.5 py-1 text-amber-700">{readyCount} ready</span>
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-700">{postedCount} posted</span>
+              <span className="rounded-full bg-rose-50 px-2.5 py-1 text-rose-700">{unbalancedCount} needs review</span>
+            </div>
+          }
         />
-      </div>
-    </div>
+      }
+      toolbar={
+        <WorkspaceToolbar
+          actions={
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter("ALL");
+                setSourceFilter("ALL");
+                setPeriodFilter("ALL");
+              }}
+              className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm text-gray-600 transition hover:bg-gray-50"
+            >
+              Reset Filters
+            </button>
+          }
+        >
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <span className="text-gray-500">Status</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value as "ALL" | BatchStatus)}
+              className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm"
+            >
+              <option value="ALL">All</option>
+              <option value="DRAFT">Draft</option>
+              <option value="READY">Ready</option>
+              <option value="POSTED">Posted</option>
+              <option value="VOID">Void</option>
+            </select>
+          </label>
+
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <span className="text-gray-500">Source</span>
+            <select
+              value={sourceFilter}
+              onChange={(e) => setSourceFilter(e.target.value as "ALL" | BatchSource)}
+              className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm"
+            >
+              <option value="ALL">All</option>
+              <option value="REVENUE">Revenue</option>
+              <option value="AP">AP</option>
+              <option value="AR">AR</option>
+              <option value="PRODUCTION">Production</option>
+              <option value="ACCRUAL">Accrual</option>
+              <option value="HEDGE">Hedge</option>
+              <option value="MANUAL">Manual</option>
+              <option value="JIB">JIB</option>
+            </select>
+          </label>
+
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <span className="text-gray-500">Period</span>
+            <select
+              value={periodFilter}
+              onChange={(e) => setPeriodFilter(e.target.value)}
+              className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm"
+            >
+              <option value="ALL">All</option>
+              <option value="2026-07">2026-07</option>
+              <option value="2026-06">2026-06</option>
+              <option value="2026-05">2026-05</option>
+            </select>
+          </label>
+        </WorkspaceToolbar>
+      }
+      detailsPanel={
+        <WorkspaceDetailsPanel
+          title="Queue Snapshot"
+          sections={[
+            {
+              title: "Overview",
+              items: [
+                { label: "Ready", value: `${readyCount}` },
+                { label: "Posted", value: `${postedCount}` },
+                { label: "Needs review", value: `${unbalancedCount}` },
+              ],
+            },
+            {
+              title: "Actions",
+              actions: (
+                <>
+                  <button className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm text-gray-600 hover:bg-gray-50">
+                    View Summary
+                  </button>
+                  <button className="rounded border border-gray-200 bg-white px-2.5 py-1.5 text-sm text-gray-600 hover:bg-gray-50">
+                    Export Queue
+                  </button>
+                </>
+              ),
+            },
+          ]}
+        />
+      }
+    >
+      <EnterpriseTable<BatchRow>
+        columns={columns}
+        data={filteredRows}
+        rowKey="id"
+        initialPageSize={10}
+        pageSizeOptions={[10, 25]}
+      />
+    </Workspace>
   );
 }
