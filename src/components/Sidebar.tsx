@@ -8,7 +8,7 @@ const NAV_ITEMS: { label: string; href: string }[] = [
   { label: "Production", href: "/production" },
   { label: "Revenue", href: "/revenue" },
   { label: "Expenses", href: "/expenses" },
-  { label: "Accounting", href: "/accounting" },
+  { label: "Accounting", href: "/accounting/batches" },
   { label: "Hedge Management", href: "/hedge-management" },
   { label: "Reports", href: "/reports" },
   { label: "Documents", href: "/documents" },

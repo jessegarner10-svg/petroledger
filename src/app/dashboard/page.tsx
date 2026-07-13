@@ -18,7 +18,7 @@ const sampleRows: Property[] = Array.from({ length: 23 }).map((_, i) => ({
   propertyName: `Lease ${i + 1}`,
   operator: [`Acme Energy`, `Gulf Ops`, `Petro Co`, `Bluefield`][i % 4],
   state: ["TX", "OK", "LA", "NM"][i % 4],
-  county: [`County ${((i % 6) + 1)}`],
+  county: `County ${((i % 6) + 1)}`,
   propertyType: i % 2 === 0 ? "Lease" : "Unit",
   workingInterest: Math.round((Math.random() * 100) * 100) / 100,
   netRevenueInterest: Math.round((Math.random() * 100) * 100) / 100,

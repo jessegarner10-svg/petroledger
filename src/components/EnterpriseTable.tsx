@@ -1,11 +1,14 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 
 export type Column<T> = {
   key: keyof T & string;
   title: string;
   sortable?: boolean;
   width?: string;
+  render?: (value: unknown, row: T) => ReactNode;
+  align?: "left" | "center" | "right";
 };
 
 type Props<T> = {
@@ -17,7 +20,7 @@ type Props<T> = {
   initialPageSize?: number;
 };
 
-export default function EnterpriseTable<T extends Record<string, any>>({
+export default function EnterpriseTable<T extends object>({
   columns,
   data,
   rowKey,
@@ -43,8 +46,8 @@ export default function EnterpriseTable<T extends Record<string, any>>({
 
     if (sortKey) {
       items = [...items].sort((a, b) => {
-        const A = a[sortKey];
-        const B = b[sortKey];
+        const A = (a as Record<string, unknown>)[sortKey];
+        const B = (b as Record<string, unknown>)[sortKey];
         if (A == null && B == null) return 0;
         if (A == null) return sortDir === "asc" ? -1 : 1;
         if (B == null) return sortDir === "asc" ? 1 : -1;
@@ -128,13 +131,16 @@ export default function EnterpriseTable<T extends Record<string, any>>({
                   onChange={(e) => toggleSelectAll(e.target.checked)}
                 />
               </th>
-              {columns.map((col) => (
-                <th
-                  key={col.key}
-                  style={{ width: col.width }}
-                  className="px-3 py-2 border-b cursor-pointer select-none"
-                  onClick={() => handleSort(col)}
-                >
+              {columns.map((col) => {
+                const alignClass = col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left";
+
+                return (
+                  <th
+                    key={col.key}
+                    style={{ width: col.width }}
+                    className={`px-3 py-2 border-b cursor-pointer select-none ${alignClass}`}
+                    onClick={() => handleSort(col)}
+                  >
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-gray-700">{col.title}</span>
                     {col.sortable && (
@@ -143,8 +149,9 @@ export default function EnterpriseTable<T extends Record<string, any>>({
                       </span>
                     )}
                   </div>
-                </th>
-              ))}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
 
@@ -175,11 +182,17 @@ export default function EnterpriseTable<T extends Record<string, any>>({
                     onChange={() => toggleRow(String(row[rowKey]))}
                   />
                 </td>
-                {columns.map((col) => (
-                  <td key={col.key} className="px-3 py-2 border-t text-sm text-gray-700 truncate">
-                    {String(row[col.key] ?? "")}
-                  </td>
-                ))}
+                {columns.map((col) => {
+                  const value = row[col.key];
+                  const alignClass = col.align === "right" ? "text-right" : col.align === "center" ? "text-center" : "text-left";
+                  const content = col.render ? col.render(value, row) : String(value ?? "");
+
+                  return (
+                    <td key={col.key} className={`px-3 py-1.5 border-t text-xs text-gray-700 ${alignClass}`}>
+                      {content}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
