@@ -1,27 +1,30 @@
 import EnterpriseTable, { Column } from "../../components/EnterpriseTable";
+import { Property } from "../../types/property";
 
-type Row = {
-  id: string;
-  name: string;
-  property: string;
-  status: string;
-  amount: number;
-};
-
-const columns: Column<Row>[] = [
-  { key: "id", title: "ID", sortable: true, width: "80px" },
-  { key: "name", title: "Name", sortable: true },
-  { key: "property", title: "Property", sortable: true },
-  { key: "status", title: "Status", sortable: true, width: "140px" },
-  { key: "amount", title: "Amount", sortable: true, width: "120px" },
+const columns: Column<Property>[] = [
+  { key: "id", title: "ID", sortable: true, width: "90px" },
+  { key: "propertyNumber", title: "Property #", sortable: true, width: "120px" },
+  { key: "propertyName", title: "Name", sortable: true },
+  { key: "operator", title: "Operator", sortable: true, width: "160px" },
+  { key: "state", title: "State", sortable: true, width: "80px" },
+  { key: "status", title: "Status", sortable: true, width: "110px" },
+  { key: "workingInterest", title: "WI %", sortable: true, width: "90px" },
+  { key: "netRevenueInterest", title: "NRI %", sortable: true, width: "90px" },
 ];
 
-const sampleRows: Row[] = Array.from({ length: 23 }).map((_, i) => ({
-  id: String(1000 + i),
-  name: `Lease ${i + 1}`,
-  property: `Property ${((i % 5) + 1)}`,
+const sampleRows: Property[] = Array.from({ length: 23 }).map((_, i) => ({
+  id: String(2000 + i),
+  propertyNumber: `P-${100 + i}`,
+  propertyName: `Lease ${i + 1}`,
+  operator: [`Acme Energy`, `Gulf Ops`, `Petro Co`, `Bluefield`][i % 4],
+  state: ["TX", "OK", "LA", "NM"][i % 4],
+  county: [`County ${((i % 6) + 1)}`],
+  propertyType: i % 2 === 0 ? "Lease" : "Unit",
+  workingInterest: Math.round((Math.random() * 100) * 100) / 100,
+  netRevenueInterest: Math.round((Math.random() * 100) * 100) / 100,
   status: i % 3 === 0 ? "Active" : i % 3 === 1 ? "Inactive" : "Pending",
-  amount: Math.round(Math.random() * 10000) / 100,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
 }));
 
 export default function DashboardPage() {
@@ -31,7 +34,7 @@ export default function DashboardPage() {
       <p className="text-gray-600 mb-4">Enterprise Data Table demonstration.</p>
 
       <section className="p-0">
-        <EnterpriseTable<Row> columns={columns} data={sampleRows} rowKey="id" initialPageSize={10} />
+        <EnterpriseTable<Property> columns={columns} data={sampleRows} rowKey="id" initialPageSize={10} />
       </section>
     </div>
   );
