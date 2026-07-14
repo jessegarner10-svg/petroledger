@@ -18,6 +18,7 @@ type Props<T> = {
   loading?: boolean;
   pageSizeOptions?: number[];
   initialPageSize?: number;
+  onRowClick?: (row: T) => void;
 };
 
 export default function EnterpriseTable<T extends object>({
@@ -27,6 +28,7 @@ export default function EnterpriseTable<T extends object>({
   loading = false,
   pageSizeOptions = [10, 25, 50],
   initialPageSize = 10,
+  onRowClick,
 }: Props<T>) {
   const [search, setSearch] = useState("");
   const [sortKey, setSortKey] = useState<string | null>(null);
@@ -129,6 +131,7 @@ export default function EnterpriseTable<T extends object>({
                   aria-label="Select all rows"
                   type="checkbox"
                   onChange={(e) => toggleSelectAll(e.target.checked)}
+                  onClick={(e) => e.stopPropagation()}
                 />
               </th>
               {columns.map((col) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import EnterpriseTable, { type Column } from "../../../components/EnterpriseTable";
 import Workspace from "../../../components/workspace/Workspace";
 import WorkspaceDetailsPanel from "../../../components/workspace/WorkspaceDetailsPanel";
@@ -252,6 +253,7 @@ function StatusBadge({ status }: { status: BatchStatus }) {
 }
 
 export default function BatchesPage() {
+  const router = useRouter();
   const [statusFilter, setStatusFilter] = useState<"ALL" | BatchStatus>("ALL");
   const [sourceFilter, setSourceFilter] = useState<"ALL" | BatchSource>("ALL");
   const [periodFilter, setPeriodFilter] = useState<string>("ALL");
@@ -446,6 +448,7 @@ export default function BatchesPage() {
         rowKey="id"
         initialPageSize={10}
         pageSizeOptions={[10, 25]}
+        onRowClick={(row) => router.push(`/accounting/batches/${row.batchNumber}`)}
       />
     </Workspace>
   );

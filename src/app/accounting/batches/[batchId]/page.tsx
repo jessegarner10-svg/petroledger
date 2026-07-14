@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import EnterpriseTable, { type Column } from "../../../../components/EnterpriseTable";
@@ -215,6 +216,12 @@ export default function BatchReviewPage() {
             }
             primaryAction={
               <div className="flex items-center gap-2">
+                <Link
+                  href="/accounting/batches"
+                  className="rounded border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Back
+                </Link>
                 <button
                   type="button"
                   onClick={() => setShowExplanation(true)}

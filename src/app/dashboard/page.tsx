@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import EnterpriseTable, { type Column } from "../../components/EnterpriseTable";
 import Workspace from "../../components/workspace/Workspace";
 import WorkspaceDetailsPanel from "../../components/workspace/WorkspaceDetailsPanel";
@@ -11,6 +14,7 @@ type WorkItem = {
   status: string;
   module: string;
   effort: string;
+  href?: string;
 };
 
 type BatchReadyRow = {
@@ -39,6 +43,7 @@ const workItems: WorkItem[] = [
     status: "Needs review",
     module: "Revenue",
     effort: "10 min",
+    href: "/accounting/batches/REV-24013",
   },
   {
     id: "ap-24008",
@@ -47,6 +52,7 @@ const workItems: WorkItem[] = [
     status: "Ready",
     module: "AP",
     effort: "8 min",
+    href: "/accounting/batches/AP-24008",
   },
   {
     id: "exceptions",
@@ -129,6 +135,8 @@ const quickActions = [
 ];
 
 export default function DashboardPage() {
+  const router = useRouter();
+
   return (
     <Workspace
       header={
@@ -165,19 +173,29 @@ export default function DashboardPage() {
             <span className="text-xs text-gray-500">Priority queue</span>
           </div>
           <div className="space-y-2">
-            {workItems.map((item) => (
-              <div key={item.id} className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
-                <div>
-                  <div className="font-medium text-gray-900">{item.title}</div>
-                  <div className="mt-0.5 text-xs text-gray-500">{item.module}</div>
+            {workItems.map((item) => {
+              const content = (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-700">
+                  <div>
+                    <div className="font-medium text-gray-900">{item.title}</div>
+                    <div className="mt-0.5 text-xs text-gray-500">{item.module}</div>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="rounded-full bg-amber-50 px-2 py-0.5 text-amber-700">{item.priority}</span>
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-slate-700">{item.status}</span>
+                    <span className="text-gray-500">{item.effort}</span>
+                  </div>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs">
-                  <span className="rounded-full bg-amber-50 px-2 py-0.5 text-amber-700">{item.priority}</span>
-                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-slate-700">{item.status}</span>
-                  <span className="text-gray-500">{item.effort}</span>
-                </div>
-              </div>
-            ))}
+              );
+
+              return item.href ? (
+                <Link key={item.id} href={item.href}>
+                  {content}
+                </Link>
+              ) : (
+                <div key={item.id}>{content}</div>
+              );
+            })}
           </div>
         </section>
 
@@ -219,7 +237,14 @@ export default function DashboardPage() {
             <h2 className="text-sm font-semibold text-gray-900">Ready to Post</h2>
             <span className="text-xs text-gray-500">Balanced drafts</span>
           </div>
-          <EnterpriseTable<BatchReadyRow> columns={readyToPostColumns} data={readyToPostRows} rowKey="id" initialPageSize={10} pageSizeOptions={[10]} />
+          <EnterpriseTable<BatchReadyRow>
+            columns={readyToPostColumns}
+            data={readyToPostRows}
+            rowKey="id"
+            initialPageSize={10}
+            pageSizeOptions={[10]}
+            onRowClick={(row) => router.push(`/accounting/batches/${row.batch}`)}
+          />
         </section>
 
         <section className="rounded-md border border-gray-200 bg-white p-4">
