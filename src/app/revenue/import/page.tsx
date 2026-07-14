@@ -7,6 +7,7 @@ import WorkflowContent from "../../../components/workflow/WorkflowContent";
 import WorkflowFooter from "../../../components/workflow/WorkflowFooter";
 import WorkflowHeader from "../../../components/workflow/WorkflowHeader";
 import WorkflowStepList, { type WorkflowStepStatus } from "../../../components/workflow/WorkflowStepList";
+import { mockExceptions, previewEntries, stepConfigs } from "../../../mock/revenueImports";
 
 type StepConfig = {
   id: string;
@@ -14,68 +15,6 @@ type StepConfig = {
   description: string;
   status: WorkflowStepStatus;
 };
-
-const stepConfigs: StepConfig[] = [
-  {
-    id: "upload",
-    title: "Upload Revenue Statement",
-    description: "Add the source file for the revenue import workflow.",
-    status: "complete",
-  },
-  {
-    id: "validate",
-    title: "Validate File",
-    description: "Review file structure and required fields.",
-    status: "current",
-  },
-  {
-    id: "exceptions",
-    title: "Resolve Exceptions",
-    description: "Address validation issues before continuing.",
-    status: "pending",
-  },
-  {
-    id: "preview",
-    title: "Preview Accounting Batch",
-    description: "Review the draft batch before generation.",
-    status: "pending",
-  },
-  {
-    id: "generate",
-    title: "Generate Batch",
-    description: "Create the accounting batch for review.",
-    status: "pending",
-  },
-];
-
-type ExceptionItem = {
-  id: string;
-  code: string;
-  suggestedMatch: string;
-  confidence: number;
-};
-
-const mockExceptions: ExceptionItem[] = [
-  {
-    id: "north",
-    code: "NORTH-117",
-    suggestedMatch: "North Fork Unit",
-    confidence: 96,
-  },
-  {
-    id: "mesa",
-    code: "MESA-FED-4",
-    suggestedMatch: "Mesa Federal 4H",
-    confidence: 92,
-  },
-];
-
-const previewEntries = [
-  { account: "4010 - Sales Revenue", debit: 1248500, credit: 0 },
-  { account: "2310 - Taxes Payable", debit: 0, credit: 98420 },
-  { account: "1100 - Accounts Receivable", debit: 0, credit: 1150080 },
-  { account: "4010 - Sales Revenue", debit: 0, credit: 1248500 },
-];
 
 export default function RevenueImportPage() {
   const [currentStep, setCurrentStep] = useState(1);
